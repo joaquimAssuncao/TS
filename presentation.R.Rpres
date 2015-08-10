@@ -105,7 +105,7 @@ dtwPlotTwoWay(alignment)
 
 Online
 ======================
-GO ahead: <small>https://joaquim.shinnyapps.io/TS</small>
+GO ahead: <small>https://joaquim.shinyapps.io/TSanalysisTool</small>
 
 ```{r, echo=FALSE, eval=FALSE}
 # #################### TS tools ##########################
