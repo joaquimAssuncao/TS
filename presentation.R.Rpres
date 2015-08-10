@@ -1,0 +1,189 @@
+Utility tools for Time Series 
+========================================================
+author: Joaquim Assuncao
+date: 08/2015
+
+
+Introduction
+========================================================
+Time Series (TS) are broadly used both in academia and industry. 
+However, considering a casual user, still difficult to find a user friendly tool.
+
+In a moment, this tool focus on get the distance between two TS.
+These measurements are used in many domains and for many purposes such as:
+
+* Speech recognition
+* Economy
+* Behavior analysis
+* Pattern recognition
+* <i>etc.</i>
+
+
+Distance Measurements
+========================================================
+There are a vast amount of works to measure distance between time series.
+So far, the most known distance measurements are the Euclidian Distance (ED).
+
+Although, there are many other techniques that could have a better performance depending on the used scenario, Dynamic Time Warping (DTW) for example, is efficient to get a good alignment between two time series.
+
+
+Distance Measurements - ED
+========================================================
+Let's consider two time series, $V$ and $S$, with the same length $T$, then:
+
+$V=  v_1,v_2,...,v_T$
+
+$S= s_1,s_2,...,s_T$
+
+
+Euclidean Distance (ED) is formally defined as:
+$ED=|S-V|= \sqrt{\sum_{i=1}^{n}(s_i-v_i)^2}$
+
+
+Euclidian Distance - Example
+========================================================
+```{r, echo=FALSE,fig.width=16,fig.height=4}
+TSa <- c(2,3,2,3,4)
+TSb <- c(3,4,2,3,4)
+plot(TSa,type="b",col="red")
+lines(TSb,col="green")
+dist(rbind(TSa,TSb))
+```
+
+```{r, echo=TRUE}
+V <- c(2,3,2,3,4)
+S <- c(3,4,2,3,4)
+```
+or...
+$ED=|S-V|= \sqrt{\sum_{i=1}^{5}(s_i-v_i)^2}$ $=$ $\sqrt{2} = 1.414214$
+
+
+Measurements - DTW
+========================================================
+
+Dynamic Time Warping (DTW) is a technique that allows a non-linear mapping of one time series to another, minimizing the distance between then. 
+
+The non-linear mapping performed by DTW, allows us to get the distance between two TS considering their alignment.
+In other words, the time warping is considered to get the best relation between distance and alignment.
+
+Measurements - DTW example
+========================================================
+Consider two TS, $S=\{1,2,1,2,1,2,1\}$ and $V=\{1,1,2,1,2,1,2\}$.
+
+Using the traditional Euclidean distance, these TS are very distant from each other. 
+However their both have a similar behavior, $V$ is just a bit shifted from $S$, thus an alignment would group the points $S_{(t)}$ and $V_{(t+1)}$, retrieving a lower distance through DTW.
+
+```{r, echo=FALSE,fig.width=16,fig.height=5}
+s <- c(1,2,1,2,1,2,1)
+v <- c(1,1,2,1,2,1,2)
+plot(s,type="b",col="red")
+lines(v,col="blue")
+```
+
+
+Measurements - DTW example
+========================================================
+```{r, echo=FALSE}
+s <- c(1,2,1,2,1,2,1)
+v <- c(1,1,2,1,2,1,2)
+```
+
+Euclidean Distance
+```{r, echo=FALSE,fig.width=16}
+dist(rbind(s,v))
+```
+
+##### DTW distance
+```{r, echo=FALSE,fig.width=16,fig.height=5}
+library(dtw)
+alignment <- dtw(s,v,step=asymmetricP1,keep=TRUE,match.col="gray90")
+alignment$distance
+dtwPlotTwoWay(alignment)
+```
+
+
+
+Online
+======================
+GO ahead: <small>https://joaquim.shinnyapps.io/TS</small>
+
+```{r, echo=FALSE, eval=FALSE}
+# #################### TS tools ##########################
+# 
+# na.lomf <<- function(object, na.rm = F) {
+#      numCols <- ""
+#      for (c in 1:ncol(object)){
+#           numCols[c] <- is.numeric(object[,c])
+#      }
+#      
+#      na.lomf.0 <- function(object) {
+#           idx <- which(!is.na(object))
+#           if (is.na(object[1])) idx <- c(1, idx)
+#           rep.int(object[idx], diff(c(idx, length(object) + 1)))
+#      }    
+#      dimLen <- length(dim(object))
+#      object <- if (dimLen == 0) na.lomf.0(object) else apply(object, dimLen, na.lomf.0)
+#      if (na.rm) na.trim(object, sides = "left", is.na = "all") else object
+#      
+#      object <- as.data.frame(object)
+#      for (c in 1:ncol(object)){
+#           if (numCols[c]){
+#                object[,c] <- as.numeric(object[,c])    
+#           }
+#      }
+#      return(object)
+# }
+# 
+# 
+# DTWgetalignment <- function(observations,maxLines){
+#      require(dtw)
+#      obs <- observations
+#      names(obs)[1] <- "A"
+#      names(obs)[2] <- "B"
+#      
+#      TSa <<- as.numeric(obs$A)[1:maxLines]
+#      TSb <<- as.numeric(obs$B)[1:maxLines]
+#      
+#      alignment <<- dtw(TSa,TSb,step=asymmetricP1,keep=TRUE,match.col="gray90")
+# }
+# 
+# DTWplot <<- function(observations){
+#      return(dtwPlotTwoWay(alignment, xlab="Time", ylab="Value"))
+# }
+# 
+# 
+# 
+# 
+# distanceMeasurements <<- function(){
+#      tmp <- paste("Euclidian: ", dist(rbind(TSa,TSb))," ",
+#                "Manhattan: ",dist(rbind(TSa,TSb), method="manhattan")," ",
+#                "Maximum: ",dist(rbind(TSa,TSb), method="maximum")," ",
+#                "DTW total: ",alignment$distance," ",
+#                "DTW normalized: ",alignment$normalizedDistance, sep="")
+#      return(tmp)
+# }
+# 
+# getSummary <<- function(){
+#      summaryTSa <<- summary(TSa)
+#      summaryTSb <<- summary(TSb)
+#      return(paste("Median: TSa=",summaryTSa[3]," TSb=", summaryTSb[3]))
+# }
+# 
+# pasteMin <<- function(){
+#      return(paste("Min: TSa=",summaryTSa[1]," TSb=", summaryTSb[1]))
+# }
+# 
+# pasteMax <<- function(){
+#      return(paste("Min: TSa=",summaryTSa[5]," TSb=", summaryTSb[5]))
+# }
+# 
+# 
+# generateTrendTSa <<- function(){
+#      plot(TSa)
+#      return(lines(lowess(TSa),col="red"))
+# }
+# generateTrendTSb <<- function(){
+#      plot(TSb)
+#      return(lines(lowess(TSb),col="red"))
+# }
+``` 
